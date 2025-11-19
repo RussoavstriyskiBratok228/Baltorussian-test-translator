@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Балторусский Переводчик</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Балторусский Переводчик</h1>
+        
+        <div class="controls">
+            <label>Письменность:</label>
+            <select id="scriptType">
+                <option value="cyrillic">Кириллица</option>
+                <option value="latin">Латиница</option>
+            </select>
+            
+            <button id="swapTexts">↔ Поменять местами</button>
+        </div>
+
+        <div class="translation-area">
+            <div class="input-section">
+                <h3>Русский текст:</h3>
+                <textarea id="russianText" placeholder="Введите текст на русском..."></textarea>
+            </div>
+            
+            <div class="output-section">
+                <h3>Балторусский перевод:</h3>
+                <div id="baltorussianOutput" class="output"></div>
+                <div class="grammar-info" id="grammarInfo"></div>
+            </div>
+        </div>
+
+        <div class="examples">
+            <h3>Примеры для тестирования:</h3>
+            <div class="example-buttons">
+                <button data-text="Я вижу красивый дом">Я вижу красивый дом</button>
+                <button data-text="Дайте мне хлеба">Дайте мне хлеба</button>
+                <button data-text="Этот человек говорит по-русски">Этот человек говорит по-русски</button>
+                <button data-text="Мы идём к большой воде">Мы идём к большой воде</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="baltorussian.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
