@@ -4,20 +4,235 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Балторусский Переводчик</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .controls label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        select {
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+
+        button {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #45b7d1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .translation-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .translation-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 1.3em;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+
+        .output {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #4ecdc4;
+            border-radius: 10px;
+            background: #f8f9fa;
+            font-size: 16px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .grammar-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .grammar-item {
+            margin-bottom: 8px;
+            padding: 5px;
+            background: white;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .examples {
+            margin-top: 30px;
+        }
+
+        .example-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .example-buttons button {
+            background: #6c757d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .example-buttons button:hover {
+            background: #5a6268;
+        }
+
+        .word-change {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .ending {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffeaa7;
+            color: #d63031;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>🔄 Балторусский Переводчик</h1>
         
         <div class="controls">
-            <label>Письменность:</label>
-            <select id="scriptType">
-                <option value="cyrillic">Кириллица</option>
-                <option value="latin">Латиница</option>
-            </select>
+            <div>
+                <label>Письменность:</label>
+                <select id="scriptType">
+                    <option value="cyrillic">Кириллица</option>
+                    <option value="latin">Латиница</option>
+                </select>
+            </div>
             
-            <button id="swapTexts">↔ Поменять местами</button>
+            <button id="swapTexts">
+                <i class="fas fa-exchange-alt"></i> Поменять местами
+            </button>
         </div>
 
         <div class="translation-area">
@@ -28,13 +243,209 @@
             
             <div class="output-section">
                 <h3>Балторусский перевод:</h3>
-                <div id="baltorussianOutput" class="output"></div>
-                <div class="grammar-info" id="grammarInfo"></div>
+                <div id="baltorussianOutput" class="output">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Переводчик загружается...
+                    </div>
+                </div>
+                <div class="grammar-info" id="grammarInfo">
+                    Введите текст для перевода
+                </div>
             </div>
         </div>
 
         <div class="examples">
             <h3>Примеры для тестирования:</h3>
+            <div class="example-buttons">
+                <button data-text="Я вижу красивый дом">Я вижу красивый дом</button>
+                <button data-text="Дайте мне хлеба">Дайте мне хлеба</button>
+                <button data-text="Этот человек говорит по-русски">Этот человек говорит по-русски</button>
+                <button data-text="Мы идём к большой воде">Мы идём к большой воде</button>
+                <button data-text="Крутой парень на улице">Крутой парень на улице</button>
+                <button data-text="Большая красивая машина">Большая красивая машина</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Встроим JavaScript прямо в HTML для надежности -->
+    <script>
+        // Временный простой переводчик пока загружаются основные файлы
+        class SimpleTranslator {
+            constructor() {
+                this.scriptType = 'cyrillic';
+            }
+
+            setScriptType(type) {
+                this.scriptType = type;
+            }
+
+            toLatin(text) {
+                const translitMap = {
+                    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+                    'е': 'e', 'ё': 'jo', 'ж': 'ž', 'з': 'z', 'и': 'i',
+                    'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+                    'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+                    'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'č',
+                    'ш': 'š', 'щ': 'šč', 'ъ': '', 'ы': 'y', 'ь': '',
+                    'э': 'e', 'ю': 'ju', 'я': 'ja'
+                };
+
+                return text.split('').map(char => translitMap[char] || char).join('');
+            }
+
+            translate(text) {
+                if (!text.trim()) {
+                    return { translation: '', analysis: [] };
+                }
+
+                // Простые замены для демонстрации
+                let result = text;
+                
+                // Прилагательные с балтийскими окончаниями
+                result = result.replace(/([а-я]+)ый/gi, '$1ais');
+                result = result.replace(/([а-я]+)ой/gi, '$1ais');
+                result = result.replace(/([а-я]+)ий/gi, '$1ais');
+                result = result.replace(/([а-я]+)ая/gi, '$1a');
+                result = result.replace(/([а-я]+)яя/gi, '$1a');
+                result = result.replace(/([а-я]+)ое/gi, '$1ais');
+                result = result.replace(/([а-я]+)ее/gi, '$1ais');
+
+                // Простые замены слов
+                const wordMap = {
+                    'я': 'es', 'ты': 'tu', 'он': 'viņš', 'она': 'viņa',
+                    'мы': 'mēs', 'вы': 'jūs', 'они': 'viņi',
+                    'человек': 'cilvēks', 'дом': 'māja', 'вода': 'ūdens',
+                    'хлеб': 'maize', 'город': 'pilsēta', 'улица': 'īla',
+                    'парень': 'zēns', 'девушка': 'meitene', 'машина': 'mašīna',
+                    'вижу': 'redzu', 'видеть': 'redzēt', 'говорить': 'runāt',
+                    'идти': 'iet', 'дать': 'dot', 'есть': 'ēst', 'пить': 'dzert'
+                };
+
+                Object.entries(wordMap).forEach(([ru, bt]) => {
+                    result = result.replace(new RegExp(ru, 'gi'), bt);
+                });
+
+                if (this.scriptType === 'latin') {
+                    result = this.toLatin(result);
+                }
+
+                return {
+                    translation: result,
+                    analysis: [{ original: text, translated: result, info: 'простой перевод' }]
+                };
+            }
+        }
+
+        // Основное приложение
+        class BaltorussianApp {
+            constructor() {
+                this.translator = new SimpleTranslator();
+                this.initializeEventListeners();
+                this.loadFullTranslator();
+            }
+
+            initializeEventListeners() {
+                const russianTextarea = document.getElementById('russianText');
+                const scriptTypeSelect = document.getElementById('scriptType');
+                const swapButton = document.getElementById('swapTexts');
+                const exampleButtons = document.querySelectorAll('.example-buttons button');
+
+                russianTextarea.addEventListener('input', () => {
+                    this.translateText();
+                });
+
+                scriptTypeSelect.addEventListener('change', (e) => {
+                    this.translator.setScriptType(e.target.value);
+                    this.translateText();
+                });
+
+                swapButton.addEventListener('click', () => {
+                    const output = document.getElementById('baltorussianOutput').textContent;
+                    if (output && !output.includes('загружается')) {
+                        russianTextarea.value = output;
+                        this.translateText();
+                    }
+                });
+
+                exampleButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        russianTextarea.value = e.target.dataset.text;
+                        this.translateText();
+                    });
+                });
+            }
+
+            async loadFullTranslator() {
+                try {
+                    // Пытаемся загрузить полную версию переводчика
+                    const response = await fetch('https://raw.githubusercontent.com/RussoavstriyskiBratok228/Baltorussian-test-translator/main/baltorussian.js');
+                    if (response.ok) {
+                        const script = document.createElement('script');
+                        script.textContent = await response.text();
+                        document.head.appendChild(script);
+                        
+                        // Загружаем app.js
+                        const appResponse = await fetch('https://raw.githubusercontent.com/RussoavstriyskiBratok228/Baltorussian-test-translator/main/app.js');
+                        if (appResponse.ok) {
+                            const appScript = document.createElement('script');
+                            appScript.textContent = await appResponse.text();
+                            document.head.appendChild(appScript);
+                            
+                            // Переключаемся на полную версию
+                            this.translator = new BaltorussianTranslator();
+                            document.getElementById('baltorussianOutput').innerHTML = '<div style="text-align: center; color: green;"><i class="fas fa-check"></i> Переводчик загружен!</div>';
+                            this.translateText();
+                        }
+                    }
+                } catch (error) {
+                    console.log('Используется упрощенный переводчик');
+                }
+            }
+
+            translateText() {
+                const text = document.getElementById('russianText').value;
+                const result = this.translator.translate(text);
+                
+                this.displayTranslation(result.translation);
+                this.displayGrammarInfo(result.analysis);
+            }
+
+            displayTranslation(translatedText) {
+                const outputElement = document.getElementById('baltorussianOutput');
+                outputElement.innerHTML = translatedText || '<em>Введите текст для перевода</em>';
+            }
+
+            displayGrammarInfo(analysis) {
+                const grammarInfoElement = document.getElementById('grammarInfo');
+                
+                if (!analysis || analysis.length === 0) {
+                    grammarInfoElement.innerHTML = '<p>Введите текст для анализа грамматики</p>';
+                    return;
+                }
+
+                let html = '<h4>Грамматический анализ:</h4>';
+                
+                analysis.forEach(item => {
+                    html += `
+                        <div class="grammar-item">
+                            <strong>"${item.original}"</strong> → 
+                            "${item.translated}"
+                            <br><small>${item.info}</small>
+                        </div>
+                    `;
+                });
+
+                grammarInfoElement.innerHTML = html;
+            }
+        }
+
+        // Запускаем приложение
+        document.addEventListener('DOMContentLoaded', () => {
+            new BaltorussianApp();
+        });
+    </script>
+</body>
+</html>            <h3>Примеры для тестирования:</h3>
             <div class="example-buttons">
                 <button data-text="Я вижу красивый дом">Я вижу красивый дом</button>
                 <button data-text="Дайте мне хлеба">Дайте мне хлеба</button>
